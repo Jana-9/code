@@ -1,81 +1,101 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Project1;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 /**
  *
  * @author User
  */
 public class MainScreen extends JFrame {
-
-    private JPanel panel;
-    public JLabel welcome;
-
+    private JPanel panel; 
+    private JPanel panel2;
+    private JPanel panel3;
+    private JLabel welcome ;
     private JButton loginButton;
     private JButton RegisterButton;
+    Register Register1;
+    Register register;
 
-    final int WINDOW_WIDTH = 250;
-    final int WINDOW_HEIGHT = 160;
+   public MainScreen() {
 
-    public MainScreen() {
+    setTitle("Main Screen ");
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setSize(900, 600);
+    setLocationRelativeTo(null);
+    setLayout(null);
+    
+    panel=new JPanel(); 
+    panel.setLayout(null);
+    panel.setSize(900,600);
+    panel.setBackground(new Color(0,0,0,10));
 
-        setTitle("Main Screen ");
-
-        setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        buildPanel();
-        setLayout(new BorderLayout());
-
-        add(panel, BorderLayout.CENTER);
-
-        setLocationRelativeTo(null);
-
-        setVisible(true);
-    }
-
-    private void buildPanel() {
-
-        panel = new JPanel();
-        welcome = new JLabel("Welcome To Home Made");
+    panel2 =new JPanel();
+    panel2.setLayout(new GridLayout(3,1));
+    panel2.setBounds(250,400,190,155);
+    panel2.setBackground (new Color(0,0,0,0));
+    
+    panel3 =new JPanel();
+    panel3.setLayout(new GridLayout(3,1));
+    panel3.setBounds(450,400,190,155);
+    panel3.setBackground (new Color(0,0,0,0));
         
+    welcome = new JLabel("--- Welcome To Home Made --- ");
+    welcome.setBounds(230,250,600,200);
+    welcome.setFont(new Font("-- LOGIN -- ",Font.BOLD+Font.PLAIN,30));
+    welcome.setForeground(Color.darkGray);
+    welcome.setBackground(new Color(0,0,0,30));   
 
-        
+       
+//background
 
-        welcome.setFont(new Font("serif", Font.BOLD, 15));
+       ImageIcon background_image = new ImageIcon("4.jpg");
+       Image img = background_image.getImage () ;
+       Image temp_img = img.getScaledInstance(1000,800,Image.SCALE_SMOOTH);
+       background_image = new ImageIcon(temp_img);
+       JLabel background = new JLabel("",background_image,JLabel.CENTER);
+       background.setBounds(0, 0, 900, 600);
+       
+     // Image
+       ImageIcon image = new ImageIcon("logo homemade.jpg");
+       Image imge = image.getImage () ;
+       Image temp_imge = imge.getScaledInstance(600,300,Image.SCALE_SMOOTH);
+       image = new ImageIcon(temp_imge);
+       JLabel Image = new JLabel("",image,JLabel.CENTER);
+       Image.setBounds(150,18, 610, 310);
+       Image.setBorder(BorderFactory.createLineBorder(new Color(0,0,0,15), 5));
+            
+             loginButton = new JButton ("Login");
+            loginButton.setBackground(Color.WHITE);
+            loginButton.setForeground(Color.DARK_GRAY);
+          loginButton.setFont(new Font("Login",Font.BOLD,17));
+         
+          loginButton.addActionListener(new loginListener());
+             
+            RegisterButton = new JButton("Register"); 
+            RegisterButton.setBackground(Color.WHITE);
+            RegisterButton.setForeground(Color.DARK_GRAY);
+            RegisterButton.setFont(new Font("Register",Font.BOLD,17));
+            
+            RegisterButton.addActionListener(new registerButton());
 
-        loginButton = new JButton("Login");
-        RegisterButton = new JButton("Regiter");
+            
+           panel.add(welcome);
+           panel2.add(loginButton);
+           panel3.add(RegisterButton);
 
-        loginButton.setBackground(Color.lightGray);
-        RegisterButton.setBackground(Color.lightGray);
+            
+            add(panel);
+            add(panel2);
+            add(panel3);
+            add(Image);
+            add(background);  
+            setVisible(true);
+            
+}
 
-        loginButton.addActionListener(new loginListener());
-      
-        RegisterButton.addActionListener(new registerButton());
-        panel.add(welcome);
-
-        panel.add(loginButton);
-
-        panel.add(RegisterButton);
-
-    }
 private class registerButton implements ActionListener {
     
         
@@ -98,6 +118,3 @@ private class loginListener implements ActionListener {
         MainScreen main = new MainScreen();
     }
 }
-
-
-

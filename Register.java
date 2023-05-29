@@ -1,18 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Project1;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.*;
-/**
- *
- * @author User
- */
+import project1.Admin;
+import project1.MainScreen;
+import project1.User;
 
 public class Register extends JFrame {
 
@@ -35,26 +31,31 @@ public class Register extends JFrame {
     public JTextField address;
     public JTextField EmailTextField;
     public JLabel TypeOfUser;
-    public JRadioButton User;
-    public JRadioButton Emp;
-    public JRadioButton ProductFamily;
+    public JRadioButton user;
+    public JRadioButton admin;
     public JButton nextButton;
     private ButtonGroup group;
     public JButton register;
-    public String TypeOfUser1;
     final int WINDOW_WIDTH = 900;
     final int WINDOW_HEIGHT = 600;
 
     public Register() {
-
         setTitle("Register");
+        setResizable(false);
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        buildPanel();
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "Confirmation", JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    MainScreen.writeDataToFiles();
+                    System.exit(0);
+                }
+            }
+        });buildPanel();
         setLayout(new BorderLayout());
         add(panel, BorderLayout.CENTER);
-
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -62,13 +63,11 @@ public class Register extends JFrame {
     private void buildPanel() {
         panel = new JPanel();
         panel.setLayout(null);
-
         panel1 = new JPanel();
         panel1.setLayout(null);
         panel1.setSize(900, 400);
         panel1.setBackground(new Color(0, 0, 0, 0));
         panel1.setBounds(30, 10, 800, 500);
-
         panel2 = new JPanel();
         panel2.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 2));
         panel2.setBounds(350, 30, 300, 55);
@@ -158,25 +157,18 @@ public class Register extends JFrame {
         TypeOfUser.setForeground(Color.BLACK);
         panel1.add(TypeOfUser);
 
-        User = new JRadioButton("User");
-        User.setBounds(280, 390, 80, 30);
-        panel1.add(User);
+        user = new JRadioButton("User");
+        user.setBounds(280, 390, 80, 30);
+        user.setSelected(true);
+        panel1.add(user);
 
-        Emp = new JRadioButton("Delivery");
-        Emp.setBounds(375, 390, 100, 30);
-        panel1.add(Emp);
-
-        ProductFamily = new JRadioButton("Productive Family");
-        ProductFamily.setBounds(485, 390, 150, 30);
-        panel1.add(ProductFamily);
+        admin = new JRadioButton("Admin");
+        admin.setBounds(375, 390, 100, 30);
+        panel1.add(admin);
 
         group = new ButtonGroup();
-        group.add(User);
-        group.add(Emp);
-        group.add(ProductFamily);
-        User.addActionListener(new RadioListener());
-        Emp.addActionListener(new RadioListener());
-        ProductFamily.addActionListener(new RadioListener());
+        group.add(user);
+        group.add(admin);
 
         register = new JButton("Register");
         register.setBounds(250, 450, 150, 40);
@@ -187,7 +179,7 @@ public class Register extends JFrame {
         nextButton = new JButton("Back");
         nextButton.setBounds(450, 450, 150, 40);
         nextButton.setBackground(Color.WHITE);
-        nextButton.addActionListener(new NextButton());
+        nextButton.addActionListener(new BackButton());
         panel1.add(nextButton);
 
         panel.add(panel3);
@@ -214,7 +206,6 @@ public class Register extends JFrame {
         panel4.add(Image);
     }
 
-
     private class registerListener implements ActionListener {
 
         @Override
@@ -222,89 +213,34 @@ public class Register extends JFrame {
             String password = new String(Password.getPassword());
             String confirmPassword = new String(Passwordcon.getPassword());
 
-            if (FirstnameText.getText().isEmpty() || LastnameText.getText().isEmpty()
-                    || EmailTextField.getText().isEmpty() || address.getText().isEmpty()
-                    || password.isEmpty() || confirmPassword.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Please fill in all the required fields.");
-            } else if (password.equals(confirmPassword)) {
-                JOptionPane.showMessageDialog(null, "Registered successfully.");
-
-                try {
-                    FileWriter file = new FileWriter("CustomerData.txt", true);
-                    PrintWriter outputFile = new PrintWriter(file);
-                    String name = FirstnameText.getText();
-                    String name1 = LastnameText.getText();
-                    String Password1 = Password.getText();
-                    String Email = EmailTextField.getText();
-                    outputFile.println(name);
-                    outputFile.println(name1);
-                    outputFile.println(Password1);
-                    outputFile.println(Email);
-                    outputFile.close();
-
-                    FileWriter file1 = new FileWriter("Customer.txt", true);
-                    PrintWriter outputFile1 = new PrintWriter(file1);
-                    outputFile1.println(Password1);
-                    outputFile1.println(Email);
-                    outputFile1.close();
-
-                    FileWriter file2 = new FileWriter("order.txt", true);
-                    PrintWriter outputFile2 = new PrintWriter(file2);
-                    outputFile2.println(name);
-                    outputFile2.println(Password);
-                    outputFile2.println(Email);
-                    outputFile2.close();
-
-                    FileWriter file3 = new FileWriter("CustomerEmail.txt", true);
-                    PrintWriter outputFile3 = new PrintWriter(file3);
-                    outputFile3.println(Email);
-                    outputFile3.println(Password1);
-                    outputFile3.close();
-
-                } catch (IOException ex) {
-                    System.out.println(ex.getMessage());
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Password does not match.");
+            if (FirstnameText.getText().trim().isEmpty() || LastnameText.getText().trim().isEmpty()
+                    || EmailTextField.getText().trim().isEmpty() || address.getText().trim().isEmpty()
+                    || password.trim().isEmpty() || confirmPassword.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please fill in all the required fields.", "Registeration Error", JOptionPane.ERROR_MESSAGE);
+            } else if (!(password.equals(confirmPassword))) {
+                JOptionPane.showMessageDialog(null, "Password does not match.", "Registeration Error", JOptionPane.ERROR_MESSAGE);
                 Password.setText("");
                 Passwordcon.setText("");
+            } else {
+                JOptionPane.showMessageDialog(null, "Registered successfully.", "Registeration Successfully", JOptionPane.INFORMATION_MESSAGE);
+                if (user.isSelected()) {
+                    MainScreen.allPersons.add(new User(FirstnameText.getText().trim(), LastnameText.getText().trim(), address.getText().trim(), EmailTextField.getText().trim(), new String(Password.getPassword())));
+                } else {
+                    MainScreen.allPersons.add(new Admin(FirstnameText.getText().trim(), LastnameText.getText().trim(), address.getText().trim(), EmailTextField.getText().trim(), new String(Password.getPassword())));
+                }
+                new Login();
+                dispose();
             }
         }
+
     }
 
-    private class RadioListener implements ActionListener {
+    private class BackButton implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            if (User.isSelected()) {
-                TypeOfUser1 = "User";
-            } else if (Emp.isSelected()) {
-                TypeOfUser1 = "Delivery";
-            } else if (ProductFamily.isSelected()) {
-                TypeOfUser1 = "Productive Family";
-            }
-
-            try {
-                FileWriter file3 = new FileWriter("CustomerData.txt", true);
-                PrintWriter outputFile3 = new PrintWriter(file3);
-
-                outputFile3.println(TypeOfUser1);
-                outputFile3.close();
-            } catch (IOException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
-    }
-
-    private class NextButton implements ActionListener {
-
-        public void actionPerformed(ActionEvent e) {
-            Login login = new Login();
-            login.show();
+            new Login();
             dispose();
         }
     }
 
-    public static void main(String[] args) {
-        Register r = new Register();
-    }
 }
